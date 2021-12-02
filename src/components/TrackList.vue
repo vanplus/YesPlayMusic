@@ -9,6 +9,8 @@
         </div>
       </div>
       <hr v-show="type !== 'cloudDisk'" />
+      <div class="item" @click="karaoke">发送到蓝冰河卡拉 OK</div>
+      <hr v-show="type !== 'cloudDisk'" />
       <div class="item" @click="play">{{ $t('contextMenu.play') }}</div>
       <div class="item" @click="addToQueue">{{
         $t('contextMenu.addToQueue')
@@ -76,6 +78,8 @@ import { isAccountLoggedIn } from '@/utils/auth';
 import TrackListItem from '@/components/TrackListItem.vue';
 import ContextMenu from '@/components/ContextMenu.vue';
 import locale from '@/locale';
+
+import { karaoke } from '@/utils/oa';
 
 export default {
   name: 'TrackList',
@@ -218,6 +222,9 @@ export default {
         let trackIDs = this.tracks.map(t => t.id);
         this.player.replacePlaylist(trackIDs, this.id, 'artist', trackID);
       }
+    },
+    karaoke() {
+      karaoke(this.rightClickedTrack);
     },
     play() {
       this.player.addTrackToPlayNext(this.rightClickedTrack.id, true);

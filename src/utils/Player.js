@@ -9,7 +9,7 @@ import { personalFM, fmTrash } from '@/api/others';
 import store from '@/store';
 import { isAccountLoggedIn } from '@/utils/auth';
 import { trackUpdateNowPlaying, trackScrobble } from '@/api/lastfm';
-import axios from 'axios';
+import { shortenTrackInfo } from '@/utils/oa';
 
 const electron =
   process.env.IS_ELECTRON === true ? window.require('electron') : null;
@@ -492,16 +492,8 @@ export default class {
       document.title = `${this._currentTrack.name} · ${this._currentTrack.ar[0].name} - YesPlayMusic`;
     }
     this._playDiscordPresence(this._currentTrack, this.seek());
-    const info = {
-      id: this.currentTrack.id,
-      artist: this.currentTrack.ar[0].name,
-      track: this.currentTrack.name,
-      album: this.currentTrack.al.name,
-      trackNumber: this.currentTrack.no,
-      duration: ~~(this.currentTrack.dt / 1000),
-    };
-    // 发送到卡拉 OK
-    axios.post(`${process.env.VUE_APP_OA_API_URL}/karaoke`, info);
+    const info = shortenTrackInfo(this.currentTrack);
+    // TODO: 参考 this.replacePlaylist 可发送 this.list 或 this._playListSource 到 卡拉 OK
     if (store.state.lastfm.key !== undefined) {
       trackUpdateNowPlaying(info);
     }
